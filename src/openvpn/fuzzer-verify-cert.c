@@ -32,9 +32,6 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
 
     SSL_load_error_strings();
     return 1;
-#else
-    /* Currently no PolarSSL/mbed TLS support */
-#error "This fuzzing target cannot be built"
 #endif
     return 1;
 }
@@ -51,7 +48,7 @@ static int parse_x509(const uint8_t* data, size_t size, X509** out)
     return 0;
 }
 #else
-static int parse_x509(const uint8_t* data, size_t size, X509* out)
+static int parse_x509(const uint8_t* data, size_t size, mbedtls_x509_crt* x509)
 {
     mbedtls_x509_crt_init(x509);
     if ( mbedtls_x509_crt_parse_der(x509, data, size) != 0 )
@@ -125,15 +122,23 @@ static int init_session_opt(struct tls_options** _opt, struct gc_arena* gc)
     switch ( generic_ssizet )
     {
         case    0:
+        {
+            struct x509_track* xt;
 #if defined(ENABLE_CRYPTO_OPENSSL)
             opt->x509_track = NULL;
 #else
-            ALLOC_OBJ_GC(opt->x509_track, struct x509_track, gc);
+            ALLOC_OBJ_GC(xt, struct x509_track, gc);
             if ( opt->x509_track == NULL )
             {
                 goto cleanup;
             }
+            xt->next = NULL;
+            FUZZER_GET_STRING_GC(xt->name, 32, gc);
+            FUZZER_GET_INTEGER(xt->flags, 0xFFFFFFFF);
+            FUZZER_GET_INTEGER(xt->nid, 0xFFFFFFFF);
+            opt->x509_track = xt;
 #endif
+        }
             break;
         case    1:
             opt->x509_track = NULL;

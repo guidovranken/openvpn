@@ -797,6 +797,10 @@ init_key_type(struct key_type *kt, const char *ciphername,
         if (!aead_cipher) /* Ignore auth for AEAD ciphers */
         {
             kt->digest = md_kt_get(authname);
+            if ( kt->digest == NULL )
+            {
+                return;
+            }
             kt->hmac_length = md_kt_size(kt->digest);
 
             if (OPENVPN_MAX_HMAC_SIZE < kt->hmac_length)

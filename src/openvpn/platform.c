@@ -190,6 +190,7 @@ platform_nice(int niceval)
 unsigned int
 platform_getpid(void)
 {
+    return 1234;
     FUZZING_BLOCK;
 
 #ifdef _WIN32

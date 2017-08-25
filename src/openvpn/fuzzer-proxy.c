@@ -16,10 +16,8 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     OpenSSL_add_ssl_algorithms();
 
     SSL_load_error_strings();
-    return 1;
-#else
-#error "This fuzzing target cannot be built"
 #endif
+    return 1;
 }
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)

@@ -734,7 +734,9 @@ md_kt_get(const char *digest)
     md = mbedtls_md_info_from_string(digest);
     if (!md)
     {
-        msg(M_FATAL, "Message hash algorithm '%s' not found", digest);
+        return NULL;
+        /* Fatal error disabled in fuzzing mode */
+        /*msg(M_FATAL, "Message hash algorithm '%s' not found", digest);*/
     }
     if (mbedtls_md_get_size(md) > MAX_HMAC_KEY_LENGTH)
     {

@@ -16,8 +16,6 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     OpenSSL_add_ssl_algorithms();
 
     SSL_load_error_strings();
-#else
-#error "This fuzzing target cannot be built"
 #endif
     return 1;
 }

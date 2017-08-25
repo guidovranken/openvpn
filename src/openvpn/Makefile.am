@@ -151,11 +151,11 @@ fuzzer_ldadd = \
 	$(SOCKETS_LIBS) \
 	$(OPTIONAL_LZ4_LIBS) \
 	$(OPTIONAL_PKCS11_HELPER_LIBS) \
-	$(OPTIONAL_CRYPTO_LIBS) \
 	$(OPTIONAL_SELINUX_LIBS) \
 	$(OPTIONAL_SYSTEMD_LIBS) \
 	$(OPTIONAL_DL_LIBS) \
 	libopenvpn.la \
+	$(OPTIONAL_CRYPTO_LIBS) \
 	$(top_builddir)/src/compat/libcompat.la \
 	$(OPTIONAL_LZO_LIBS)
 
