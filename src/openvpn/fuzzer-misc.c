@@ -47,9 +47,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         goto cleanup;
     }
 
-    /* Randomize in case the function depends on it value (it shouldn't)*/
-    FUZZER_GET_DATA(&string_out, sizeof(char*));
-
     FUZZER_GET_INTEGER(num_loops, 16);
     for (i = 0; i < num_loops; i++)
     {
@@ -59,7 +56,6 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
             case 0:
                 break;
             case 1:
-                //deconstruct_name_value(string1, &string_out, string2, &gc);
                 break;
             case 2:
                 env_set_del(es, string1);
