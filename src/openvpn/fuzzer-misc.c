@@ -6,6 +6,24 @@
 
 #define SUBBUFFER_SIZE 256
 
+/* This fuzzer tests a number of functions defined in misc.c, in particular
+ * functions that:
+ *      - take one or two null-terminated strings as input
+ *      - operate on environmental variable lists (struct env_set) 
+ * or both.
+ *
+ * At the beginning of each fuzzing cycle:
+ *     - an environmental variable list is instantiated
+ *     - two null-terminated strings are extracted from the fuzzer input
+ *     - the number of loops (0..16) is determined
+ *
+ * Each loop iteration, a function is picked [0..numfunctions] and executed
+ * with the struct env_set, string 1 and/or string 2 as inputs.
+ *
+ * The struct env_set and the two null-terminated strings are retained
+ * throughout the entire fuzzing cycle.
+ */
+
 int LLVMFuzzerInitialize(int *argc, char ***argv)
 {
     return 1;
