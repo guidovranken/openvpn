@@ -20,10 +20,12 @@
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size);
 int LLVMFuzzerInitialize(int *argc, char ***argv);
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     int n;
 
-    for (n = 1; n < argc; ++n) {
+    for (n = 1; n < argc; ++n)
+    {
         struct stat st;
         FILE *f;
         unsigned char *buf;

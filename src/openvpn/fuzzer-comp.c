@@ -104,7 +104,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         FUZZER_GET_INTEGER(operation, 1);
         FUZZER_GET_INTEGER(data_size, frame_buf_size);
         FUZZER_GET_DATA(data2, data_size);
-        if ( buf_write(&buf, data2, data_size) == true ) {
+        if ( buf_write(&buf, data2, data_size) == true )
+        {
             buf2 = buf;
             fuzzer_alter_buffer(&buf2);
             if ( operation == 0 )
@@ -136,7 +137,8 @@ cleanup:
     static int inited = 0;
     if ( inited == 0 )
     {
-        printf("\n\n\n\n\nOpenVPN has not been compiled with compression support. This fuzzer does nothing.\n\n\n\n\n");
+        printf("\n\n\n\n\nOpenVPN has not been compiled with compression"
+                "support. This fuzzer does nothing.\n\n\n\n\n");
         fflush(stdout);
         inited = 1;
     }

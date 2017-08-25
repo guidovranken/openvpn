@@ -103,7 +103,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     buf_null_terminate(bufp);
                     if ( BLEN(bufp) )
                     {
-                        /* Never true but this prevents optimizing away the strlen */
+                        /* Never true but this prevents optimizing away the
+                         * strlen */
                         if ( strlen((char*)BPTR(bufp)) == (MAX_STR_LEN*2) )
                         {
                             abort();
@@ -114,7 +115,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     buf_chomp(bufp);
                     if ( BLEN(bufp) )
                     {
-                        /* Never true but this prevents optimizing away the strlen */
+                        /* Never true but this prevents optimizing away the
+                         * strlen */
                         if ( strlen((char*)BPTR(bufp)) == (MAX_STR_LEN*2) )
                         {
                             abort();
@@ -172,7 +174,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     generic_char = generic_ssizet;
                     FUZZER_GET_INTEGER(generic_ssizet, 4294967295);
                     FUZZER_GET_INTEGER(generic_ssizet2, 4294967295);
-                    string_mod(str, (int)generic_ssizet, (int)generic_ssizet, generic_char);
+                    string_mod(str, (int)generic_ssizet, (int)generic_ssizet,
+                            generic_char);
                     free(str); str = NULL;
                     break;
                 case    21:
@@ -183,7 +186,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     generic_char2 = generic_ssizet;
                     if ( generic_char )
                     {
-                        string_replace_leading(str, generic_char, generic_char2);
+                        string_replace_leading(str, generic_char,
+                                generic_char2);
                     }
                     free(str); str = NULL;
                     break;
@@ -305,7 +309,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                 case    4:
                     FUZZER_GET_INTEGER(generic_ssizet, 1024);
                     FUZZER_GET_STRING(str, MAX_STR_LEN);
-                    buffer_list_aggregate_separator(buflistp, generic_ssizet, str);
+                    buffer_list_aggregate_separator(buflistp, generic_ssizet,
+                            str);
                     free(str); str = NULL;
                     break;
                 case    5:

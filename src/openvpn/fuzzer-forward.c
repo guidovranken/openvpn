@@ -11,7 +11,9 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
     return 1;
 }
 
-static int _init_options(struct options* options, struct client_nat_entry** cne, struct gc_arena *gc)
+static int _init_options(struct options* options,
+        struct client_nat_entry** cne,
+        struct gc_arena *gc)
 {
     ssize_t num_loops, generic_ssizet;
     size_t n;
@@ -63,7 +65,8 @@ static int _init_options(struct options* options, struct client_nat_entry** cne,
     options->client_nat = new_client_nat_list(gc);
 
     FUZZER_GET_INTEGER(num_loops, MAX_CLIENT_NAT);
-    for (n = 0; n < num_loops; n++) {
+    for (n = 0; n < num_loops; n++)
+    {
         struct client_nat_entry* _cne;
         ALLOC_ARRAY_GC(cne[n], struct client_nat_entry, 1, gc);
         _cne = cne[n];
@@ -150,13 +153,16 @@ static int init_c2(struct context_2* c2, struct gc_arena* gc)
             break;
     }
 
-    if ( fuzzer_get_current_size() == 0 ) {
+    if ( fuzzer_get_current_size() == 0 )
+    {
         goto cleanup;
     }
 
     buf = alloc_buf(fuzzer_get_current_size());
 
-    if ( buf_write(&buf, fuzzer_get_current_data(), fuzzer_get_current_size()) == false ) {
+    if ( buf_write(&buf, fuzzer_get_current_data(),
+                fuzzer_get_current_size()) == false )
+    {
         abort();
     }
 
@@ -189,17 +195,20 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     fuzzer_set_input((unsigned char*)data, size);
     gc = gc_new();
 
-    if ( _init_options(&ctx.options, cne, &gc) == -1 ) {
+    if ( _init_options(&ctx.options, cne, &gc) == -1 )
+    {
         goto cleanup;
     }
 
-    if ( init_tuntap(&tuntap) == -1 ) {
+    if ( init_tuntap(&tuntap) == -1 )
+    {
         goto cleanup;
     }
 
     ctx.c1.tuntap = &tuntap;
 
-    if ( init_c2(&ctx.c2, &gc) == -1 ) {
+    if ( init_c2(&ctx.c2, &gc) == -1 )
+    {
         goto cleanup;
     }
 

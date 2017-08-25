@@ -15,7 +15,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     /* Encapsulate raw input buffer in a struct buffer */
     ipbuf = alloc_buf(size);
-    if ( buf_write(&ipbuf, data, size) == false ) {
+    if ( buf_write(&ipbuf, data, size) == false )
+    {
         goto cleanup;
     }
 

@@ -87,7 +87,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     n_buckets = generic_ssizet;
                     FUZZER_GET_INTEGER(generic_ssizet, 4294967296);
                     iv = generic_ssizet;
-                    hash = hash_init(generic_ssizet, iv, word_hash_function, word_compare_function);
+                    hash = hash_init(generic_ssizet, iv, word_hash_function,
+                            word_compare_function);
                 }
                 break;
             case    1:

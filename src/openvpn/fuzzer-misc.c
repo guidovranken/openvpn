@@ -103,7 +103,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                 break;
             case 20:
                 FUZZER_GET_INTEGER(generic_ssizet, 1);
-                string_array_len( make_env_array(es, generic_ssizet ? true : false, &gc) );
+                string_array_len( make_env_array(es,
+                            generic_ssizet ? true : false, &gc) );
                 break;
             case 21:
                 string_array_len( make_arg_array(string1, string2, &gc) );

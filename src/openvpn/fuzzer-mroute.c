@@ -15,8 +15,10 @@ static void serialize_mroute_helper(struct mroute_helper* mh)
     test_undefined_memory(&mh->cache_generation, sizeof(mh->cache_generation));
     test_undefined_memory(&mh->ageable_ttl_secs, sizeof(mh->ageable_ttl_secs));
     test_undefined_memory(&mh->n_net_len, sizeof(mh->n_net_len));
-    test_undefined_memory(&mh->net_len, mh->n_net_len * sizeof(mh->net_len[0]));
-    test_undefined_memory(&mh->net_len_refcount, mh->n_net_len * sizeof(mh->net_len_refcount[0]));
+    test_undefined_memory(&mh->net_len,
+            mh->n_net_len * sizeof(mh->net_len[0]));
+    test_undefined_memory(&mh->net_len_refcount,
+            mh->n_net_len * sizeof(mh->net_len_refcount[0]));
 }
 
 /* End of serialization of struct mroute_helper. */
@@ -63,11 +65,13 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     FUZZER_GET_INTEGER(generic_ssizet, 1);
                     type = generic_ssizet == 1 ? DEV_TYPE_TUN : DEV_TYPE_TAP;
                     buf = alloc_buf(size);
-                    if ( buf_write(&buf, data2, input_size) == false ) {
+                    if ( buf_write(&buf, data2, input_size) == false )
+                    {
                         goto cleanup;
                     }
                     fuzzer_alter_buffer(&buf);
-                    mroute_extract_addr_from_packet(&src, &dest, &esrc, &edest, &buf, type);
+                    mroute_extract_addr_from_packet(&src, &dest, &esrc, &edest,
+                            &buf, type);
                     free_buf(&buf);
                     break;
                 }
@@ -134,7 +138,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                 if ( mh == NULL )
                 {
                     int ageable_ttl_secs;
-                    FUZZER_GET_DATA(&ageable_ttl_secs, sizeof(ageable_ttl_secs));
+                    FUZZER_GET_DATA(&ageable_ttl_secs,
+                            sizeof(ageable_ttl_secs));
                     mh = mroute_helper_init(ageable_ttl_secs);
                 }
                 break;

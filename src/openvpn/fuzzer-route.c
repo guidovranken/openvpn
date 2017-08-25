@@ -12,19 +12,23 @@
 
 static void serialize_route_bypass(struct route_bypass* bypass)
 {
-    test_undefined_memory(bypass->bypass, bypass->n_bypass * sizeof(bypass->bypass[0]));
+    test_undefined_memory(bypass->bypass,
+            bypass->n_bypass * sizeof(bypass->bypass[0]));
 }
 static void serialize_route_special_addr(struct route_special_addr* spec)
 {
     test_undefined_memory(&spec->flags, sizeof(spec->flags));
-    test_undefined_memory(&spec->remote_endpoint, sizeof(spec->remote_endpoint));
+    test_undefined_memory(&spec->remote_endpoint,
+            sizeof(spec->remote_endpoint));
     test_undefined_memory(&spec->remote_host, sizeof(spec->remote_host));
-    test_undefined_memory(&spec->remote_host_local, sizeof(spec->remote_host_local));
+    test_undefined_memory(&spec->remote_host_local,
+            sizeof(spec->remote_host_local));
     serialize_route_bypass(&spec->bypass);
     test_undefined_memory(&spec->default_metric, sizeof(spec->default_metric));
 }
 
-static void serialize_route_gateway_address(struct route_gateway_address* gateway)
+static void serialize_route_gateway_address(
+        struct route_gateway_address* gateway)
 {
     test_undefined_memory(&gateway->addr, sizeof(gateway->addr));
     test_undefined_memory(&gateway->netmask, sizeof(gateway->netmask));
@@ -94,13 +98,17 @@ static void serialize_route_ipv6_list(struct route_ipv6* routes)
     }
 }
 
-static void serialize_route_ipv6_gateway_address(struct route_ipv6_gateway_address* gateway)
+static void serialize_route_ipv6_gateway_address(
+        struct route_ipv6_gateway_address* gateway)
 {
-    test_undefined_memory(&gateway->addr_ipv6, sizeof(gateway->addr_ipv6));
-    test_undefined_memory(&gateway->netbits_ipv6, sizeof(gateway->netbits_ipv6));
+    test_undefined_memory(&gateway->addr_ipv6,
+            sizeof(gateway->addr_ipv6));
+    test_undefined_memory(&gateway->netbits_ipv6,
+            sizeof(gateway->netbits_ipv6));
 }
 
-static void serialize_route_ipv6_gateway_info(struct route_ipv6_gateway_info* rgi)
+static void serialize_route_ipv6_gateway_info(
+        struct route_ipv6_gateway_info* rgi)
 {
     int i;
 
@@ -117,8 +125,10 @@ static void serialize_route6_list(struct route_ipv6_list* rl6)
 {
     test_undefined_memory(&rl6->iflags, sizeof(rl6->iflags));
     test_undefined_memory(&rl6->spec_flags, sizeof(rl6->spec_flags));
-    test_undefined_memory(&rl6->remote_endpoint_ipv6, sizeof(rl6->remote_endpoint_ipv6));
-    test_undefined_memory(&rl6->remote_host_ipv6, sizeof(rl6->remote_host_ipv6));
+    test_undefined_memory(&rl6->remote_endpoint_ipv6,
+            sizeof(rl6->remote_endpoint_ipv6));
+    test_undefined_memory(&rl6->remote_host_ipv6,
+            sizeof(rl6->remote_host_ipv6));
     test_undefined_memory(&rl6->default_metric, sizeof(rl6->default_metric));
     serialize_route_ipv6_gateway_info(&rl6->rgi6);
     test_undefined_memory(&rl6->flags, sizeof(rl6->flags));
@@ -180,7 +190,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     FUZZER_GET_DATA(&(opt.flags), sizeof(opt.flags));
                     FUZZER_GET_STRING_GC(remote_endpoint, 32, &gc);
                     FUZZER_GET_INTEGER(default_metric, 1);
-                    if ( init_route_list(&rl, &opt, remote_endpoint, default_metric, remote_host, es) )
+                    if ( init_route_list(&rl, &opt, remote_endpoint,
+                                default_metric, remote_host, es) )
                     {
                         route_list_inited = true;
                     }
@@ -267,14 +278,16 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                     FUZZER_GET_DATA(&remote_host, sizeof(remote_host));
                     FUZZER_GET_INTEGER(default_metric, 1);
 
-                    if ( init_route_ipv6_list(&rl6, &opt6, remote_endpoint, default_metric, &remote_host, es) )
+                    if ( init_route_ipv6_list(&rl6, &opt6, remote_endpoint,
+                                default_metric, &remote_host, es) )
                     {
                         route_ipv6_list_inited = true;
                     }
                 }
                 break;
             case    7:
-                if ( route_list_inited == true && route_ipv6_list_inited == true )
+                if ( route_list_inited == true &&
+                     route_ipv6_list_inited == true )
                 {
                     unsigned int flags;
                     struct tuntap tt = {0};

@@ -49,7 +49,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
                 FUZZER_GET_STRING_GC(authname, 1024, &gc);
                 FUZZER_GET_INTEGER(keysize, (MAX_CIPHER_KEY_LENGTH+10));
                 FUZZER_GET_INTEGER(tls_mode, 1);
-                init_key_type(&kt, ciphername, authname, keysize, tls_mode ? true : false, 0);
+                init_key_type(&kt, ciphername, authname, keysize,
+                        tls_mode ? true : false, 0);
             }
             break;
     }

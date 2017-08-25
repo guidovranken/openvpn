@@ -5,7 +5,8 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-int LLVMFuzzerInitialize(int *argc, char ***argv) {
+int LLVMFuzzerInitialize(int *argc, char ***argv)
+{
 #if defined(ENABLE_CRYPTO) && defined(ENABLE_CRYPTO_OPENSSL)
     CRYPTO_malloc_init();
     SSL_library_init();
@@ -39,14 +40,16 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     FUZZER_GET_INTEGER(len, USER_PASS_LEN-1);
     FUZZER_GET_DATA(pi.up.username, len);
-    if ( strlen(pi.up.username) == 0 ) {
+    if ( strlen(pi.up.username) == 0 )
+    {
         goto cleanup;
     }
 
     FUZZER_GET_INTEGER(len, USER_PASS_LEN-1);
     FUZZER_GET_DATA(pi.up.password, len);
     pi.up.password[len] = 0;
-    if ( strlen(pi.up.password) == 0 ) {
+    if ( strlen(pi.up.password) == 0 )
+    {
         goto cleanup;
     }
 
@@ -87,7 +90,8 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     FUZZER_GET_STRING(pi.proxy_authenticate, 256);
     
-    establish_http_proxy_passthru(&pi, 0, "1.2.3.4", "777", NULL, &lookahead, &signal_received);
+    establish_http_proxy_passthru(&pi, 0, "1.2.3.4", "777", NULL, &lookahead,
+            &signal_received);
 cleanup:
     free(pi.proxy_authenticate);
     gc_free(&gc);

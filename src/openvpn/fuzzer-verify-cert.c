@@ -43,7 +43,8 @@ int LLVMFuzzerInitialize(int *argc, char ***argv)
 static int parse_x509(const uint8_t* data, size_t size, X509** out)
 {
     *out = d2i_X509(NULL, (const unsigned char**)&data, size);
-    if ( *out == NULL ) {
+    if ( *out == NULL )
+    {
         return -1;
     }
 
@@ -53,7 +54,8 @@ static int parse_x509(const uint8_t* data, size_t size, X509** out)
 static int parse_x509(const uint8_t* data, size_t size, X509* out)
 {
     mbedtls_x509_crt_init(x509);
-    if ( mbedtls_x509_crt_parse_der(x509, data, size) != 0 ) {
+    if ( mbedtls_x509_crt_parse_der(x509, data, size) != 0 )
+    {
         return -1;
     }
 
@@ -174,7 +176,8 @@ static int init_session(struct tls_session** _session, struct gc_arena* gc)
     FUZZER_GET_STRING(session->common_name, 256);
 
     /* Initialize the session->opt structure */
-    if ( init_session_opt(&(session->opt), gc) == -1 ) {
+    if ( init_session_opt(&(session->opt), gc) == -1 )
+    {
         goto cleanup;
     }
 
@@ -219,12 +222,14 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     data += SUBBUFFER_SIZE;
     size -= SUBBUFFER_SIZE;
 
-    if ( parse_x509(data, size, &x509) == -1 ) {
+    if ( parse_x509(data, size, &x509) == -1 )
+    {
         gc_free(&gc);
         return 0;
     }
 
-    if ( init_session(&session, &gc) == -1 ) {
+    if ( init_session(&session, &gc) == -1 )
+    {
         goto cleanup;
     }
 
@@ -241,14 +246,16 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 #endif
 
 cleanup:
-    if ( session ) {
+    if ( session )
+    {
         /* common_name is the only session member that may contain
          * malloc'ed data */
         free(session->common_name);
 
         /* remote_cert_eku is the only session->opt member that
          * may contain malloc'ed data */
-        if ( session->opt ) {
+        if ( session->opt )
+        {
             free((void*)session->opt->remote_cert_eku);
         }
     }
