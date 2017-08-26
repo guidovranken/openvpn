@@ -583,8 +583,8 @@ AC_COMPILE_IFELSE(
 	[AC_MSG_RESULT([no])]
 )
 
-CFLAGS="${CFLAGS} -DFUZZING -g3 -fsanitize-coverage=trace-pc-guard,indirect-calls,trace-cmp -fsanitize=address -fsanitize=undefined -fsanitize-recover=alignment"
-CXXFLAGS="${CXXFLAGS} -DFUZZING -g3 -fsanitize-coverage=trace-pc-guard,indirect-calls,trace-cmp -fsanitize=address -fsanitize=undefined -fsanitize-recover=alignment"
+CFLAGS="${CFLAGS} -DFUZZING -g -fsanitize-coverage=trace-gep,trace-div,trace-pc-guard,indirect-calls,trace-cmp -fsanitize=address -fsanitize=undefined -fsanitize-recover=alignment"
+CXXFLAGS="${CXXFLAGS} -DFUZZING -g -fsanitize-coverage=trace-gep,trace-div,trace-pc-guard,indirect-calls,trace-cmp -fsanitize=address -fsanitize=undefined -fsanitize-recover=alignment"
 CC="clang"
 CXX="clang++"
 
