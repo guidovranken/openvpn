@@ -468,8 +468,7 @@ ssize_t platform_recvmsg(int sockfd, struct msghdr *msg, int flags)
 
 ssize_t platform_sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen)
 {
-    FUZZING_BLOCK;
-
+    return platform_send(sockfd, buf, len, 0);
     return sendto(sockfd, buf, len, flags, dest_addr, addrlen);
 }
 
