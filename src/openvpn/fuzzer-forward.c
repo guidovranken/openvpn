@@ -117,7 +117,7 @@ cleanup:
     return -1;
 }
 
-static int init_c2(struct context_2* c2, struct gc_arena* gc)
+static int init_c2_incoming_tun(struct context_2* c2, struct gc_arena* gc)
 {
     unsigned int generic_uint;
     ssize_t generic_ssizet;
@@ -176,8 +176,7 @@ cleanup:
     return -1;
 }
 
-
-int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+void run_process_incoming_tun(uint8_t* data, size_t size)
 {
     struct gc_arena gc;
     struct client_nat_entry* cne[MAX_CLIENT_NAT];
@@ -207,7 +206,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
     ctx.c1.tuntap = &tuntap;
 
-    if ( init_c2(&ctx.c2, &gc) == -1 )
+    if ( init_c2_incoming_tun(&ctx.c2, &gc) == -1 )
     {
         goto cleanup;
     }
@@ -219,6 +218,70 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 cleanup:
     free_buf(&ctx.c2.buf);
     gc_free(&gc);
+}
 
+static int init_c2_outgoing_tun(struct context_2* c2, struct gc_arena* gc)
+{
+    unsigned int generic_uint;
+    struct buffer buf;
+
+    c2->tun_write_bytes = 0;
+
+    FUZZER_GET_DATA(&generic_uint, sizeof(generic_uint));
+    c2->frame.link_mtu_dynamic = generic_uint;
+    FUZZER_GET_DATA(&generic_uint, sizeof(generic_uint));
+    c2->frame.extra_frame = generic_uint;
+    FUZZER_GET_DATA(&generic_uint, sizeof(generic_uint));
+    c2->frame.extra_tun = generic_uint;
+
+    buf = alloc_buf_gc(fuzzer_get_current_size(), gc);
+
+    if ( buf_write(&buf, fuzzer_get_current_data(),
+                fuzzer_get_current_size()) == false )
+    {
+        abort();
+    }
+
+    fuzzer_alter_buffer(&buf);
+    c2->to_tun = buf;
+
+    return 0;
+
+cleanup:
+    return -1;
+}
+void run_process_outgoing_tun(uint8_t* data, size_t size)
+{
+    struct gc_arena gc;
+    struct context ctx;
+    struct tuntap tuntap;
+
+    memset(&ctx, 0, sizeof(ctx));
+
+    fuzzer_set_input((unsigned char*)data, size);
+    gc = gc_new();
+
+    if ( init_tuntap(&tuntap) == -1 )
+    {
+        goto cleanup;
+    }
+
+    ctx.c1.tuntap = &tuntap;
+
+    if ( init_c2_outgoing_tun(&ctx.c2, &gc) == -1 )
+    {
+        goto cleanup;
+    }
+
+    process_outgoing_tun(&ctx);
+cleanup:
+
+    gc_free(&gc);
+}
+
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+{
+    run_process_incoming_tun(data, size);
+    run_process_outgoing_tun(data, size);
     return 0;
 }

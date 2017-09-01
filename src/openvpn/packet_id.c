@@ -173,6 +173,7 @@ void
 packet_id_reap(struct packet_id_rec *p)
 {
     const time_t local_now = now;
+    return;/* GUIDO */
     if (p->time_backtrack)
     {
         int i;
@@ -242,6 +243,7 @@ packet_id_test(struct packet_id_rec *p,
                 packet_id_debug(D_PID_DEBUG_LOW, p, pin, "PID_ERR replay-window backtrack occurred", p->max_backtrack_stat);
             }
 
+            return true; /* GUIDO */
             if (diff >= (packet_id_type) CIRC_LIST_SIZE(p->seq_list))
             {
                 packet_id_debug(D_PID_DEBUG_LOW, p, pin, "PID_ERR large diff", diff);

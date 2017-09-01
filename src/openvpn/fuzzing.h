@@ -22,31 +22,34 @@ void test_undefined_memory(void* vp, size_t s);
 
 /* Get data of size 'size', store result in 'dest',
  * go to 'cleanup' upon failure */
-#define FUZZER_GET_DATA(dest, size) \
-{ \
-    if ( fuzzer_get_data((dest), (size)) < 0 ) \
-    { \
+#define FUZZER_GET_DATA(dest, size) { \
+    if ( fuzzer_get_data((dest), (size)) < 0 ) { \
+        goto cleanup; \
+    } \
+}
+
+/* Get data of size up to 'size', store result in 'dest',
+ * store amount of bytes read in 'numread',
+ * go to 'cleanup' upon failure */
+#define FUZZER_GET_DATA_RND(dest, size) { \
+    if ( (numread = fuzzer_get_data_rnd((dest), (size))) < 0 ) { \
         goto cleanup; \
     } \
 }
 /* Get integer in range [0..max], store result in 'dest',
  * go to 'cleanup' upon failure */
-#define FUZZER_GET_INTEGER(dest, max) \
-{ \
+#define FUZZER_GET_INTEGER(dest, max) { \
     (dest) = fuzzer_get_integer(max); \
-    if ( (dest) < 0 ) \
-    { \
+    if ( (dest) < 0 ) { \
         goto cleanup; \
     } \
 }
 
 /* Get null-terminated string of size up to 'size', store
  * result in 'dest', go to 'cleanup' upon failure */
-#define FUZZER_GET_STRING(dest, max) \
-{ \
+#define FUZZER_GET_STRING(dest, max) { \
     (dest) = NULL; \
-    if ( ((dest) = fuzzer_get_string(max)) == NULL ) \
-    { \
+    if ( ((dest) = fuzzer_get_string(max)) == NULL ) { \
         goto cleanup; \
     } \
 }
@@ -54,11 +57,9 @@ void test_undefined_memory(void* vp, size_t s);
 /* Get null-terminated string of size up to 'size' using
  * garbage collector 'gc', store result in 'dest',
  * go to 'cleanup' upon failure */
-#define FUZZER_GET_STRING_GC(dest, max, gc) \
-{ \
+#define FUZZER_GET_STRING_GC(dest, max, gc) { \
     (dest) = NULL; \
-    if ( ((dest) = fuzzer_get_string_gc((max), (gc))) == NULL ) \
-    { \
+    if ( ((dest) = fuzzer_get_string_gc((max), (gc))) == NULL ) { \
         goto cleanup; \
     } \
 }
