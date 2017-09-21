@@ -1534,7 +1534,7 @@ read_control_auth(struct buffer *buf,
     }
     else if (ctx->mode == TLS_WRAP_CRYPT)
     {
-        struct buffer tmp = alloc_buf(buf_forward_capacity_total(buf));
+        struct buffer tmp = alloc_buf_gc(buf_forward_capacity_total(buf), &gc);
         if (!tls_crypt_unwrap(buf, &tmp, &ctx->opt))
         {
             msg(D_TLS_ERRORS, "TLS Error: tls-crypt unwrapping failed from %s",
@@ -1543,7 +1543,7 @@ read_control_auth(struct buffer *buf,
         }
         ASSERT(buf_init(buf, buf->offset));
         ASSERT(buf_copy(buf, &tmp));
-        free_buf(&tmp);
+        buf_clear(&tmp);
     }
 
     if (ctx->mode == TLS_WRAP_NONE || ctx->mode == TLS_WRAP_AUTH)
@@ -1607,7 +1607,7 @@ key_source2_print(const struct key_source2 *k)
  * @param out           Output buffer
  * @param olen          Length of the output buffer
  */
-void
+static void
 tls1_P_hash(const md_kt_t *md_kt,
             const uint8_t *sec,
             int sec_len,
@@ -1840,20 +1840,8 @@ generate_key_expansion(struct key_ctx_bi *key,
     }
 
     /* Initialize OpenSSL key contexts */
-
-    ASSERT(server == true || server == false);
-
-    init_key_ctx(&key->encrypt,
-                 &key2.keys[(int)server],
-                 key_type,
-                 OPENVPN_OP_ENCRYPT,
-                 "Data Channel Encrypt");
-
-    init_key_ctx(&key->decrypt,
-                 &key2.keys[1-(int)server],
-                 key_type,
-                 OPENVPN_OP_DECRYPT,
-                 "Data Channel Decrypt");
+    int key_direction = server ? KEY_DIRECTION_INVERSE : KEY_DIRECTION_NORMAL;
+    init_key_ctx_bi(key, &key2, key_direction, key_type, "Data Channel");
 
     /* Initialize implicit IVs */
     key_ctx_update_implicit_iv(&key->encrypt, key2.keys[(int)server].hmac,
@@ -1861,7 +1849,6 @@ generate_key_expansion(struct key_ctx_bi *key,
     key_ctx_update_implicit_iv(&key->decrypt, key2.keys[1-(int)server].hmac,
                                MAX_HMAC_KEY_LENGTH);
 
-    key->initialized = true;
     ret = true;
 
 exit:
@@ -1978,6 +1965,11 @@ tls_session_update_crypto_params(struct tls_session *session,
     {
         msg(D_HANDSHAKE, "Data Channel: using negotiated cipher '%s'",
             options->ciphername);
+        if (options->keysize)
+        {
+            msg(D_HANDSHAKE, "NCP: overriding user-set keysize with default");
+            options->keysize = 0;
+        }
     }
 
     init_key_type(&session->opt->key_type, options->ciphername,

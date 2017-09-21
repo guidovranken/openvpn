@@ -519,14 +519,14 @@ add_route_ipv6_to_option_list(struct route_ipv6_option_list *l,
     l->routes_ipv6 = ro;
 }
 
-void
+static void
 clear_route_list(struct route_list *rl)
 {
     gc_free(&rl->gc);
     CLEAR(*rl);
 }
 
-void
+static void
 clear_route_ipv6_list(struct route_ipv6_list *rl6)
 {
     gc_free(&rl6->gc);
@@ -1535,7 +1535,9 @@ add_route(struct route_ipv4 *r,
     struct gc_arena gc;
     struct argv argv = argv_new();
     const char *network;
+#if !defined(ENABLE_IPROUTE) && !defined(TARGET_AIX)
     const char *netmask;
+#endif
     const char *gateway;
     bool status = false;
     int is_local_route;
@@ -1548,7 +1550,9 @@ add_route(struct route_ipv4 *r,
     gc_init(&gc);
 
     network = print_in_addr_t(r->network, 0, &gc);
+#if !defined(ENABLE_IPROUTE) && !defined(TARGET_AIX)
     netmask = print_in_addr_t(r->netmask, 0, &gc);
+#endif
     gateway = print_in_addr_t(r->gateway, 0, &gc);
 
     is_local_route = local_route(r->network, r->netmask, r->gateway, rgi);
@@ -2137,8 +2141,12 @@ delete_route(struct route_ipv4 *r,
     struct gc_arena gc;
     struct argv argv = argv_new();
     const char *network;
+#if !defined(ENABLE_IPROUTE) && !defined(TARGET_AIX)
     const char *netmask;
+#endif
+#if !defined(TARGET_LINUX) && !defined(TARGET_ANDROID)
     const char *gateway;
+#endif
     int is_local_route;
 
     if ((r->flags & (RT_DEFINED|RT_ADDED)) != (RT_DEFINED|RT_ADDED))
@@ -2149,8 +2157,12 @@ delete_route(struct route_ipv4 *r,
     gc_init(&gc);
 
     network = print_in_addr_t(r->network, 0, &gc);
+#if !defined(ENABLE_IPROUTE) && !defined(TARGET_AIX)
     netmask = print_in_addr_t(r->netmask, 0, &gc);
+#endif
+#if !defined(TARGET_LINUX) && !defined(TARGET_ANDROID)
     gateway = print_in_addr_t(r->gateway, 0, &gc);
+#endif
 
     is_local_route = local_route(r->network, r->netmask, r->gateway, rgi);
     if (is_local_route == LR_ERROR)
